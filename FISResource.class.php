@@ -168,13 +168,17 @@ class FISResource {
                 //读取domain.conf,对所有静态资源uri根据不同url，添加domain，方便本地调试
                 $domain = self::getDomain($smarty);
                 if($domain) {
-                    foreach($map['res'] as $id => &$res) {
-                        if($res['type'] !== 'tpl') {
-                            $res['uri'] = $domain . $res['uri'];
+                    if(isset($map['res'])){
+                        foreach($map['res'] as $id => &$res) {
+                            if($res['type'] !== 'tpl') {
+                                $res['uri'] = $domain . $res['uri'];
+                            }
                         }
                     }
-                    foreach($map['pkg'] as $id => &$res) {
-                        $res['uri'] = $domain . $res['uri'];
+                    if(isset($map['pkg'])) {
+                        foreach($map['pkg'] as $id => &$res) {
+                            $res['uri'] = $domain . $res['uri'];
+                        }
                     }
                 }
                 self::$arrMap[$strNamespace] = $map;
@@ -327,7 +331,7 @@ class FISResource {
      */
     public static function getDomain($smarty) {
         $domainFile = 'domain.conf';
-        $domainKey = isset($_GET['domain']) ? $_GET['domain'] : 'online';
+        $domainKey = isset($_GET['domain']) && $_GET['domain'] ? $_GET['domain'] : 'online';
         $configDirs = $smarty->getConfigDir();
         foreach($configDirs as $strDir) {
             $strDir = preg_replace('/[\\/\\\\]+/', '/', $strDir . '/' . $domainFile);
