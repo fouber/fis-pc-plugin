@@ -164,24 +164,7 @@ class FISResource {
         foreach ($arrConfigDir as $strDir) {
             $strPath = preg_replace('/[\\/\\\\]+/', '/', $strDir . '/' . $strMapName);
             if(is_file($strPath)){
-                $map = json_decode(file_get_contents($strPath), true);
-                //读取domain.conf,对所有静态资源uri根据不同url，添加domain，方便本地调试
-                $domain = self::getDomain($smarty);
-                if($domain) {
-                    if(isset($map['res'])){
-                        foreach($map['res'] as $id => &$res) {
-                            if($res['type'] !== 'tpl') {
-                                $res['uri'] = $domain . $res['uri'];
-                            }
-                        }
-                    }
-                    if(isset($map['pkg'])) {
-                        foreach($map['pkg'] as $id => &$res) {
-                            $res['uri'] = $domain . $res['uri'];
-                        }
-                    }
-                }
-                self::$arrMap[$strNamespace] = $map;
+                self::$arrMap[$strNamespace] = json_decode(file_get_contents($strPath), true);
                 return true;
             }
         }
@@ -266,7 +249,7 @@ class FISResource {
                 $arrPkg = null;
                 $arrPkgHas = array();
                 if(isset($arrRes)) {
-                    if(isset($arrRes['pkg'])){
+                    if(!array_key_exists('fis_debug', $_GET) && isset($arrRes['pkg'])){
                         $arrPkg = &$arrMap['pkg'][$arrRes['pkg']];
                         $strURI = $arrPkg['uri'];
                         foreach ($arrPkg['has'] as $strResId) {
@@ -324,24 +307,5 @@ class FISResource {
         if (preg_match('/\.('.implode('|', $arrExt).')$/', $strName)) {
             trigger_error(date('Y-m-d H:i:s') . '   ' . $strMessage, $errorLevel);
         }
-    }
-    /**
-     * 从domain.conf文件获得domain设置
-     * 返回url(http://xxxx?domain=online)中请求的online的domain值
-     */
-    public static function getDomain($smarty) {
-        $domainFile = 'domain.conf';
-        $domainKey = isset($_GET['domain']) && $_GET['domain'] ? $_GET['domain'] : 'online';
-        $configDirs = $smarty->getConfigDir();
-        foreach($configDirs as $strDir) {
-            $strDir = preg_replace('/[\\/\\\\]+/', '/', $strDir . '/' . $domainFile);
-            if(is_file($strDir)) {
-                $smarty->configLoad($domainFile);
-                $domains = $smarty->getConfigVars();
-                break;
-            }
-        }
-        $domainValue = isset($domains[$domainKey]) ? $domains[$domainKey] : null;
-        return $domainValue;
     }
 }
