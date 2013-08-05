@@ -52,7 +52,7 @@ class FISResource {
             $arrMap = &self::$arrMap[$strNamespace];
             $arrRes = &$arrMap['res'][$strName];
             if (isset($arrRes)) {
-                if (isset($arrRes['pkg'])) {
+                if (!array_key_exists('fis_debug', $_GET) && isset($arrRes['pkg'])) {
                     $arrPkg = &$arrMap['pkg'][$arrRes['pkg']];
                     return $arrPkg['uri'];
                 } else {
