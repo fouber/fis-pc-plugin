@@ -25,7 +25,7 @@ class fis_widget_map {
 function smarty_compiler_widget($arrParams,  $smarty){
     //支持1.X widget 通过path属性判断 同时判断是否有name属性
     if (isset($arrParams['path'])) {
-        if(!isset($arrParams['name']) || strpos($arrParams['name'], ':') !== false){
+        if(!isset($arrParams['name']) || strpos($arrParams['name'], ':') === false){
             $path = $arrParams['path'];
             unset($arrParams['path']);
             return getWidgetStrCode($path, $arrParams);
