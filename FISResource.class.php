@@ -14,6 +14,12 @@ class FISResource {
 
     public static $framework = null;
 
+    //记录{%script%}, {%style%}的id属性
+    public static $cp = null;
+
+    //{%script%} {%style%}去重
+    public static $arrEmbeded = array();
+
     public static function reset(){
         self::$arrMap = array();
         self::$arrLoaded = array();
