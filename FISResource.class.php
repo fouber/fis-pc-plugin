@@ -3,6 +3,7 @@
 class FISResource {
 
     const CSS_LINKS_HOOK = '<!--[FIS_CSS_LINKS_HOOK]-->';
+    const JS_SCRIPT_HOOK = '<!--[FIS_JS_SCRIPT_HOOK]-->';
 
     private static $arrMap = array();
     private static $arrLoaded = array();
@@ -25,11 +26,20 @@ class FISResource {
         return self::CSS_LINKS_HOOK;
     }
 
-    //输出模板的最后，替换css hook为css标签集合
+    public static function jsHook(){
+        return self::JS_SCRIPT_HOOK;
+    }
+
+    //输出模板的最后，替换css hook为css标签集合,替换js hook为js代码
     public static function renderResponse($strContent){
-        $intPos = strpos($strContent, self::CSS_LINKS_HOOK);
-        if($intPos !== false){
-            $strContent = substr_replace($strContent, self::render('css'), $intPos, strlen(self::CSS_LINKS_HOOK));
+        $cssIntPos = strpos($strContent, self::CSS_LINKS_HOOK);
+        if($cssIntPos !== false){
+            $strContent = substr_replace($strContent, self::render('css'), $cssIntPos, strlen(self::CSS_LINKS_HOOK));
+        }
+        $jsIntPos = strpos($strContent, self::JS_SCRIPT_HOOK);
+        if($jsIntPos !== false){
+            $jsContent = self::render('js') . self::renderScriptPool();
+            $strContent = substr_replace($strContent, $jsContent, $jsIntPos, strlen(self::JS_SCRIPT_HOOK));
         }
         self::reset();
         return $strContent;
@@ -286,7 +296,7 @@ class FISResource {
                 self::triggerError($strName, 'missing map file of "' . $strNamespace . '"', E_USER_NOTICE);
             }
         }
-        self::triggerError($strName, 'unknown resource load error', E_USER_NOTICE);
+        self::triggerError($strName, 'unknown resource "' . $strName . '" load error', E_USER_NOTICE);
     }
 
     /**
