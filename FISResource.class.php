@@ -321,7 +321,7 @@ class FISResource {
             'xhtml',
         );
         if (preg_match('/\.('.implode('|', $arrExt).')$/', $strName)) {
-            trigger_error(date('Y-m-d H:i:s') . '   ' . $strMessage, $errorLevel);
+            trigger_error(date('Y-m-d H:i:s') . '   ' . $strName . ' ' . $strMessage, $errorLevel);
         }
     }
 }
